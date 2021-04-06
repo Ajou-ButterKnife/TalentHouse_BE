@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const mongooseAutoInc = require("mongoose-auto-increment");
+// const mongooseAutoInc = require("mongoose-auto-increment");
 
 const userRouter = require("./routes/user");
 
@@ -13,7 +13,7 @@ mongoose.connect("mongodb://localhost/testDB", {
   useFindAndModify: false,
   useCreateIndex: true,
 });
-mongooseAutoInc.initialize(mongoose.connection);
+// mongooseAutoInc.initialize(mongoose.connection);
 
 app.use("/user", userRouter);
 

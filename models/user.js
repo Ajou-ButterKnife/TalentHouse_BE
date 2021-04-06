@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
-const mongooseAutoInc = require("mongoose-auto-increment");
+// const mongooseAutoInc = require("mongoose-auto-increment");
 
 const UserSchema = new mongoose.Schema({
+  id: {
+    type: Number,
+  },
   email: {
     type: String,
     unique: true,
@@ -18,5 +21,5 @@ const UserSchema = new mongoose.Schema({
   nickname: { type: String },
 });
 
-UserSchema.plugin(mongooseAutoInc.plugin, "User");
+// UserSchema.plugin(mongooseAutoInc.plugin, "User");
 module.exports = mongoose.model("User", UserSchema);
