@@ -1,20 +1,19 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const mongooseAutoInc = require("mongoose-auto-increment");
 
 const userRouter = require("./routes/user");
 
 const app = express();
 const port = 4000;
 
-mongoose
-  .connect("mongodb://localhost/testDB", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-    useCreateIndex: true,
-  })
-  .then(() => console.log("mongoDB connection Success!"))
-  .catch((err) => console.log(err));
+mongoose.connect("mongodb://localhost/testDB", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+  useCreateIndex: true,
+});
+mongooseAutoInc.initialize(mongoose.connection);
 
 app.use("/user", userRouter);
 
