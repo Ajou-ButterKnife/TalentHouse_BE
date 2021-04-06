@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
 // const mongooseAutoInc = require("mongoose-auto-increment");
 
 const userRouter = require("./routes/user");
@@ -19,6 +20,7 @@ mongoose
 // mongooseAutoInc.initialize(mongoose.connection);
 
 app.use("/user", userRouter);
+app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
   res.send("This is App Server!!");
