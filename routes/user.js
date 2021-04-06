@@ -18,7 +18,8 @@ router.post("/", async (req, res, next) => {
   //   res.send("This is login!!!");
   console.log("POST :/user");
   // var data = req.body;
-  console.log(req);
+  console.log(req.body);
+  res.send(req.body);
 });
 
 module.exports = router;
