@@ -19,8 +19,8 @@ mongoose
   .catch((err) => console.log(err));
 // mongooseAutoInc.initialize(mongoose.connection);
 
-app.use("/user", userRouter);
 app.use(bodyParser.json());
+app.use("/user", userRouter);
 
 app.get("/", (req, res) => {
   res.send("This is App Server!!");
