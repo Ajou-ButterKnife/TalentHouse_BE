@@ -7,12 +7,15 @@ const userRouter = require("./routes/user");
 const app = express();
 const port = 4000;
 
-mongoose.connect("mongodb://localhost/testDB", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false,
-  useCreateIndex: true,
-});
+mongoose
+  .connect("mongodb://localhost/testDB", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true,
+  })
+  .then(() => console.log("DB connection success!!"))
+  .catch((err) => console.log(err));
 // mongooseAutoInc.initialize(mongoose.connection);
 
 app.use("/user", userRouter);
