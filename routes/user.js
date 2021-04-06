@@ -10,7 +10,7 @@ router.get("/", async (req, res, next) => {
   //   res.send("This is Login!");
 });
 
-router.post("/user", async (req, res, next) => {
+router.post("/", async (req, res, next) => {
   // const users = await User.find({});
   // res.json(users);
   //   res.send("This is login!!!");
