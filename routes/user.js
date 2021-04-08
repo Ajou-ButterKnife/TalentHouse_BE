@@ -1,6 +1,6 @@
-// const User = require("../models/user");
-
+const User = require("../models/user");
 const express = require("express");
+const crypto = require("crypto");
 const router = express.Router();
 
 router.get("/", async (req, res, next) => {
@@ -12,10 +12,17 @@ router.get("/", async (req, res, next) => {
   console.log("GET :/user");
 });
 
+router.post("/signup", (req, res) => {
+  var data = req.body;
+
+  const user = new User({});
+});
+
 router.post("/", async (req, res, next) => {
   // const users = await User.find({});
   // res.json(users);
   //   res.send("This is login!!!");
+
   console.log("POST :/user");
   // var data = req.body;
   console.log(req.body);

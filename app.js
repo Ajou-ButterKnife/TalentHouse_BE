@@ -1,25 +1,23 @@
 const express = require("express");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
-// const mongooseAutoInc = require("mongoose-auto-increment");
 
+const mongoose = require("mongoose");
+const autoInc = require("mongoose-auto-increment");
+const bodyParser = require("body-parser");
 const userRouter = require("./routes/user");
+
+mongoose.connect("mongodb://localhost:27017/demo", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+  useCreateIndex: true,
+});
+autoInc.initialize(mongoose.connection);
 
 const app = express();
 const port = 4000;
 
-mongoose
-  .connect("mongodb://localhost/testDB", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-    useCreateIndex: true,
-  })
-  .then(() => console.log("DB connection success!!"))
-  .catch((err) => console.log(err));
-// mongooseAutoInc.initialize(mongoose.connection);
-
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/user", userRouter);
 
 app.get("/", (req, res) => {
