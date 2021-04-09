@@ -3,6 +3,14 @@ const express = require("express");
 const crypto = require("crypto");
 const router = express.Router();
 
+
+var admin = require("firebase-admin");
+var serviceAccount = require("path/to/serviceAccountKey.json");
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+
 router.get("/", async (req, res, next) => {
   // const users = await User.find({});
   //   res.json(users);
@@ -30,6 +38,8 @@ router.post("/signup", (req, res) => {
 });
 
 router.post("/", async (req, res, next) => {
+  var data = req.body;
+  console(admin.auth().getUser(data.uid));
   // const users = await User.find({});
   // res.json(users);
   //   res.send("This is login!!!");
