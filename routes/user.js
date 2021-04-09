@@ -39,7 +39,7 @@ router.post("/signup", (req, res) => {
 
 router.post("/", async (req, res, next) => {
   var data = req.body;
-  console(admin.auth().getUser(data.uid));
+  var ttt = await admin.auth().getUser(data.uid);
   // const users = await User.find({});
   // res.json(users);
   //   res.send("This is login!!!");
@@ -47,6 +47,7 @@ router.post("/", async (req, res, next) => {
   console.log("POST :/user");
   // var data = req.body;
   console.log(req.body);
+	console.log(ttt);
   res.send(req.body);
 });
 

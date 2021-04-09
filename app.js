@@ -12,7 +12,7 @@ mongoose.connect("mongodb://localhost/demo", {
 });
 
 const app = express();
-const port = 4444;
+const port = 4000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
