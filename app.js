@@ -1,10 +1,11 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const userRouter = require("./routes/user");
 
+const loginRouter = require("./routes/login");
+const signupRouter = require("./routes/signup");
 
-mongoose.connect("mongodb://localhost/demo", {
+mongoose.connect("mongodb://127.0.0.1:27017/myDB", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useFindAndModify: false,
@@ -16,7 +17,8 @@ const port = 4000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use("/user", userRouter);
+app.use("/login", loginRouter);
+app.use("/signup", signupRouter);
 
 app.get("/", (req, res) => {
   res.send("This is App Server!!");
