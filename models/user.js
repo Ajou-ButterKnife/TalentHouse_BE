@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
-const autoInc = require("mongoose-auto-increment");
 
 const UserSchema = new mongoose.Schema({
-  seq: {
+  id: {
     type: Number,
+    required: true,
   },
   email: {
     type: String,
@@ -21,9 +21,4 @@ const UserSchema = new mongoose.Schema({
   nickname: { type: String },
 });
 
-UserSchema.plugin(autoInc.plugin, {
-  model: "User",
-  field: "seq",
-  startAt: 1,
-});
 module.exports = mongoose.model("User", UserSchema);

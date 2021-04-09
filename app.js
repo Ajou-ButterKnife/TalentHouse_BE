@@ -1,7 +1,5 @@
 const express = require("express");
-
 const mongoose = require("mongoose");
-const autoInc = require("mongoose-auto-increment");
 const bodyParser = require("body-parser");
 const userRouter = require("./routes/user");
 
@@ -11,7 +9,6 @@ mongoose.connect("mongodb://localhost:27017/demo", {
   useFindAndModify: false,
   useCreateIndex: true,
 });
-autoInc.initialize(mongoose.connection);
 
 const app = express();
 const port = 4000;

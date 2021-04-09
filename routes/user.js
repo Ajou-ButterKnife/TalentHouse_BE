@@ -15,7 +15,18 @@ router.get("/", async (req, res, next) => {
 router.post("/signup", (req, res) => {
   var data = req.body;
 
-  const user = new User({});
+  const user = new User({
+    email: data.email,
+    password: crypto.createHash("sha512").update(data.pwd).digest("base64"),
+    phone_num: data.phone_num,
+  });
+  user.save((err) => {
+    if (err) {
+      res.send({ save: "fail" });
+    } else {
+      res.send({ save: "success" });
+    }
+  });
 });
 
 router.post("/", async (req, res, next) => {
