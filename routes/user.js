@@ -5,7 +5,7 @@ const router = express.Router();
 
 
 var admin = require("firebase-admin");
-var serviceAccount = require("path/to/serviceAccountKey.json");
+var serviceAccount = require("../butterfly-efb30-firebase-adminsdk-2x0u2-344c142e5a.json");
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });

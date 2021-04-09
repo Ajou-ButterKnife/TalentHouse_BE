@@ -3,15 +3,8 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const userRouter = require("./routes/user");
 
-var admin = require("firebase-admin");
 
-var serviceAccount = require("./butterfly-efb30-firebase-adminsdk-2x0u2-7a9f670cf8.json");
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
-
-mongoose.connect("mongodb://localhost:27017/demo", {
+mongoose.connect("mongodb://localhost/demo", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useFindAndModify: false,
@@ -19,7 +12,7 @@ mongoose.connect("mongodb://localhost:27017/demo", {
 });
 
 const app = express();
-const port = 4000;
+const port = 4444;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
