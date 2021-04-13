@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const loginRouter = require("./routes/login");
 const signupRouter = require("./routes/signup");
 
-mongoose.connect("mongodb://127.0.0.1:27017/myDB", {
+mongoose.connect("mongodb://127.0.0.1:27017/testDB", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useFindAndModify: false,
@@ -27,4 +27,3 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
-
