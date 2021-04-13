@@ -16,6 +16,7 @@ router.post("/normal", async (req, res) => {
       .update(req.body.password)
       .digest("base64");
 
+  console.log("POST : /login/normal\nrequest")
   console.log(req.body);
   const findUser = User.findOne({
     email: email,
@@ -26,13 +27,14 @@ router.post("/normal", async (req, res) => {
 
   const result = await findUser.exec();
 
-  console.log(result);
   const response = {};
-  response["result"] = result != null ? "SUCCESS" : "FAIL";
-  response["userId"] = result != null ? 1 : 0;
-
-  console.log("POST : /login/normal");
-  res.send(response);
+  response["result"] = result != null ? "Success" : "Fail";
+  response["detail"] = result != null ? "" : "아이디 혹은 비밀번호가 잘못되었습니다.";
+  response["data"] = result != null ? { "_id" : result._id } : null;
+  console.log("response")
+  console.log(response)
+  console.log()
+  res.status(200).send(response);
 });
 
 // 소셜 로그인
