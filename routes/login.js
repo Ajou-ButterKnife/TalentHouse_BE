@@ -38,14 +38,18 @@ router.post("/normal", async (req, res) => {
 // 소셜 로그인
 router.post("/social", async (req, res, next) => {
   const user_uid = req.body.uid;
-  const user = User.findOne({uid:user_uid}, function(err, user_dt) {
+  const user = await User.findOne({uid:user_uid}, function(err, user_dt) {
+    console.log(user_dt);
     if(err) {
       res.status(500).send(err);
     }else {
-      if(user_dt == null){
-        res.status(200).json({"socialFlag" : "signup"});   // 회원가입으로 가세요
-      } else {
-        res.status(200).json({"socialFlag" : "login"});   // 로그인 성공
+      if(user_dt == null){  // 로그인 실패, DB에 동일 uid가 존재하지 않는다
+        res.status(200).json({"result" : "Fail"});   
+      } else {              // 로그인 성공, DB에 동일 uid 존재
+        var unique_id =  user_dt._id;
+        console.log(unique_id);
+        res.status(200).json({"result" : "Success",
+                              "data" : {"_id":unique_id}});  
       }
     }
   })

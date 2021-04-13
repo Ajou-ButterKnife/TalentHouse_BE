@@ -66,4 +66,34 @@ router.post("/social", async (req, res, next) => {
     });
   });
 
+router.post("/nickname_overlap_check", async (req, res, next) => {
+  const user_nickname = req.body.nickname;
+  const user_check = await User.findOne({nickname:user_nickname}, function(err, check_dt) {
+    if(err) {
+      res.status(500).send(err);
+    }else {
+      if(check_dt == null){   // 중복되는 닉네임 없음
+        res.status(200).json({"result" : "Success"});
+      } else {                // 중복되는 닉네임 존재
+        res.status(200).json({"result" : "Fail"});
+      }
+    }
+  })
+});
+
+router.post("/email_overlap_check", async (req, res, next) => {
+  const user_email = req.body.email;
+  const user_check = await User.findOne({email:user_email}, function(err, check_dt) {
+    if(err) {
+      res.status(500).send(err);
+    }else {
+      if(check_dt == null){   // 중복되는 이메일 없음
+        res.status(200).json({"result" : "Success"});
+      } else {                // 중복되는 이메일 존재
+        res.status(200).json({"result" : "Fail"});
+      }
+    }
+  })
+});
+
 module.exports = router;
