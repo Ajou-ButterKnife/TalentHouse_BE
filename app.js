@@ -13,7 +13,7 @@ mongoose.connect("mongodb://127.0.0.1:27017/myDB", {
 });
 
 const app = express();
-const port = 8888;
+const port = 4000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
