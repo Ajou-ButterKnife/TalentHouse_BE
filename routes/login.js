@@ -11,7 +11,11 @@ router.get("/", async (req, res, next) => {
 // 어플 내에서의 일반 로그인
 router.post("/normal", async (req, res) => {
   const email = req.body.email;
-  const password = req.body.password;
+  const password = crypto
+      .createHash("sha512")
+      .update(req.body.password)
+      .digest("base64");
+
   console.log(req.body);
   const findUser = User.findOne({
     email: email,
@@ -45,7 +49,7 @@ router.post("/social", async (req, res, next) => {
       }
     }
   })
-  
+
 
 });
 
