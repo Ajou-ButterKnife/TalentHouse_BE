@@ -35,14 +35,13 @@ router.post("/normal", async (req, res) => {
     nickname: data.nickname,
     category: data.category,
   });
-  console.log("Here");
   user.save((err) => {
     if (err) {
       console.log("/normal : Save Error");
-      res.status(200).send({ save: "fail" });
+      res.status(500).send({ result: "Fail" });
     } else {
       console.log("/normal : Save Success");
-      res.status(500).send({ save: "success" });
+      res.status(200).send({ result: "Success" });
     }
   });
 });
@@ -97,6 +96,7 @@ router.post("/email_overlap_check", async (req, res, next) => {
       }
     }
   })
+
 });
 
 module.exports = router;
