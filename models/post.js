@@ -7,7 +7,7 @@ const PostSchema = new mongoose.Schema({
   },
   writer_nickname: {
     type: String,
-    required: true,
+//    required: true,
   },
   category: {
     type: String,
@@ -22,7 +22,7 @@ const PostSchema = new mongoose.Schema({
     required: true,
   },
   image_url: {
-    type: String,
+    type: [String],
   },
   video_url: {
     type: String,
