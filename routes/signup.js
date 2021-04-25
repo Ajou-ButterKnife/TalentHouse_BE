@@ -5,7 +5,6 @@ const router = express.Router();
 
 var admin = require("firebase-admin");
 var serviceAccount = require("../butterfly-efb30-firebase-adminsdk-2x0u2-344c142e5a.json");
-const { db } = require("../models/user");
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
@@ -51,52 +50,60 @@ router.post("/social", async (req, res, next) => {
 
   var userInfo = await admin.auth().getUser(data.uid);
   const user = new User({
-    email : userInfo.email,
-    nickname : data.nickname,
-    phone_num : data.phone_num,
-    category : data.category,
-    uid : data.uid,
+    email: userInfo.email,
+    nickname: data.nickname,
+    phone_num: data.phone_num,
+    category: data.category,
+    uid: data.uid,
   });
   user.save((err) => {
-    if(err) {
+    if (err) {
       //console.log(err);
-      res.status(200).json({"result" : "Fail"});
-
+      res.status(200).json({ result: "Fail" });
     } else {
-      res.status(200).json({"result" : "Success"});
+      res.status(200).json({ result: "Success" });
     }
   });
- });
+});
 
 router.post("/nickname_overlap_check", async (req, res, next) => {
   const user_nickname = req.body.nickname;
-  const user_check = await User.findOne({nickname:user_nickname}, function(err, check_dt) {
-    if(err) {
-      res.status(500).send(err);
-    }else {
-      if(check_dt == null){   // 중복되는 닉네임 없음
-        res.status(200).json({"result" : "Success"});
-      } else {                // 중복되는 닉네임 존재
-        res.status(200).json({"result" : "Fail"});
+  const user_check = await User.findOne(
+    { nickname: user_nickname },
+    function (err, check_dt) {
+      if (err) {
+        res.status(500).send(err);
+      } else {
+        if (check_dt == null) {
+          // 중복되는 닉네임 없음
+          res.status(200).json({ result: "Success" });
+        } else {
+          // 중복되는 닉네임 존재
+          res.status(200).json({ result: "Fail" });
+        }
       }
     }
-  })
+  );
 });
 
 router.post("/email_overlap_check", async (req, res, next) => {
   const user_email = req.body.email;
-  const user_check = await User.findOne({email:user_email}, function(err, check_dt) {
-    if(err) {
-      res.status(500).send(err);
-    }else {
-      if(check_dt == null){   // 중복되는 이메일 없음
-        res.status(200).json({"result" : "Success"});
-      } else {                // 중복되는 이메일 존재
-        res.status(200).json({"result" : "Fail"});
+  const user_check = await User.findOne(
+    { email: user_email },
+    function (err, check_dt) {
+      if (err) {
+        res.status(500).send(err);
+      } else {
+        if (check_dt == null) {
+          // 중복되는 이메일 없음
+          res.status(200).json({ result: "Success" });
+        } else {
+          // 중복되는 이메일 존재
+          res.status(200).json({ result: "Fail" });
+        }
       }
     }
-  })
-
+  );
 });
 
 module.exports = router;
