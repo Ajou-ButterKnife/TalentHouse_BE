@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 
 const loginRouter = require("./routes/login");
 const signupRouter = require("./routes/signup");
+const postRouter = require("./routes/post");
 
 mongoose.connect("mongodb://127.0.0.1:27017/testDB", {
   useNewUrlParser: true,
@@ -19,6 +20,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/login", loginRouter);
 app.use("/signup", signupRouter);
+app.use("/post", postRouter);
 
 app.get("/", (req, res) => {
   res.send("This is App Server!!");
