@@ -28,13 +28,16 @@ router.post('/normal', async (req, res) => {
   const result = await findUser.exec();
 
   const response = {};
-  response['result'] = result != null ? 'Success' : 'Fail';
-  response['detail'] =
-    result != null ? '' : '아이디 혹은 비밀번호가 잘못되었습니다.';
-  response['data'] = result != null ? { _id: result._id } : null;
-  console.log('response');
-  console.log(response);
-  console.log();
+
+  response["result"] = result != null ? "Success" : "Fail";
+  response["detail"] = result != null ? "" : "아이디 혹은 비밀번호가 잘못되었습니다.";
+  response["data"] = result != null ? {
+    "_id" : result._id,
+    "nickname" : result.nickname,
+  } : null;
+  console.log("response")
+  console.log(response)
+  console.log()
   res.status(200).send(response);
 });
 
