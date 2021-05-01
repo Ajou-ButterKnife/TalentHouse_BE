@@ -16,6 +16,7 @@ router.post('/create', async (req, res) => {
 
   const post = new Post({
     writer_id: data.id,
+    writer_nickname: data.nickname,
     category: data.category,
     title: data.title,
     description: data.description,
