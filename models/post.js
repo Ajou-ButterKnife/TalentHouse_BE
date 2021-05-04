@@ -39,8 +39,7 @@ const PostSchema = new mongoose.Schema({
     default: [],
   },
   update_time: {
-    type: Date,
-    default: Date.now,
+    type: Number,
   },
 });
 
