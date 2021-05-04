@@ -27,6 +27,7 @@ router.post('/create', async (req, res) => {
     description: data.description,
     image_url: data.imageUrl,
     video_url: data.videoUrl,
+    update_time: Date.now()
   });
   post.save((err) => {
     if (err) {
