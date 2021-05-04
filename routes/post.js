@@ -3,10 +3,10 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/:page', async (req, res, next) => {
-  const offset = 10;
+  const offset = 6;
   const posts = await Post.find({}, {})
     .sort({
-      update_time: 1,
+      update_time: -1,
     })
     .skip(req.params.page * offset)
     .limit(offset);
@@ -27,7 +27,7 @@ router.post('/create', async (req, res) => {
     description: data.description,
     image_url: data.imageUrl,
     video_url: data.videoUrl,
-    update_time: Date.now()
+    update_time: Date.now(),
   });
   post.save((err) => {
     if (err) {
