@@ -1,3 +1,4 @@
+const User = require('../models/user');
 const Post = require('../models/post');
 const express = require('express');
 const router = express.Router();
@@ -14,6 +15,19 @@ router.get('/:page', async (req, res, next) => {
     data: posts,
   };
   res.status(200).send(retval);
+});
+
+router.get('/category/:id', async (req, res, next) => {
+  console.log(req.params.id);
+  const category = await User.findOne(
+    { _id: req.params.id },
+    { _id: false, category: true }
+  );
+  const retval = {
+    data: category,
+  };
+  console.log(category);
+  res.status(200).json(retval);
 });
 
 router.post('/create', async (req, res) => {
