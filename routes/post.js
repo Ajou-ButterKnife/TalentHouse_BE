@@ -2,21 +2,32 @@ const Post = require('../models/post');
 const express = require('express');
 const router = express.Router();
 
+
 const offset = 10;
 
-router.get('/:page', async (req, res, next) => {
-  console.log("/" + req.params.page)
-  const posts = await Post.find({}, {})
+router.get('/', async (req, res, next) => {
+  console.log(req.query.page);
+  console.log(req.query.category);
+
+  const categoryTemp = req.query.category.split('-');
+
+  const posts = await Post.find({
+    category: { $in: categoryTemp },
+  })
     .sort({
       update_time: -1,
     })
-    .skip(req.params.page * offset)
+    .skip(req.query.page * offset)
     .limit(offset);
+
+  console.log(posts);
   const retval = {
     data: posts,
   };
+
   res.status(200).send(retval);
 });
+
 
 router.get('/:id/:page', async (req, res, next) => {
   console.log("/" + req.params.id + "/" + req.params.page)
