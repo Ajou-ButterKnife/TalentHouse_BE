@@ -1,19 +1,42 @@
+const User = require('../models/user');
 const Post = require('../models/post');
 const express = require('express');
 const router = express.Router();
 
-router.get('/:page', async (req, res, next) => {
+router.get('/', async (req, res, next) => {
+  console.log(req.query.page);
+  console.log(req.query.category);
+
+  const categoryTemp = req.query.category.split('-');
+
   const offset = 6;
-  const posts = await Post.find({}, {})
+  const posts = await Post.find({
+    category: { $in: categoryTemp },
+  })
     .sort({
       update_time: -1,
     })
-    .skip(req.params.page * offset)
+    .skip(req.query.page * offset)
     .limit(offset);
+
+  console.log(posts);
   const retval = {
     data: posts,
   };
+
   res.status(200).send(retval);
+});
+
+router.get('/category/:id', async (req, res, next) => {
+  console.log('/category');
+  const category = await User.findOne(
+    { _id: req.params.id },
+    { _id: false, category: true }
+  );
+  const retval = {
+    data: category,
+  };
+  res.status(200).json(retval);
 });
 
 router.post('/create', async (req, res) => {
