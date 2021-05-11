@@ -2,7 +2,6 @@ const Post = require('../models/post');
 const express = require('express');
 const router = express.Router();
 
-
 const offset = 10;
 
 router.get('/', async (req, res, next) => {
@@ -28,15 +27,14 @@ router.get('/', async (req, res, next) => {
   res.status(200).send(retval);
 });
 
-
 router.get('/:id/:page', async (req, res, next) => {
-  console.log("/" + req.params.id + "/" + req.params.page)
-  const posts = await Post.find({ writer_id : req.params.id }, {})
-      .sort({
-        update_time: -1,
-      })
-      .skip(req.params.page * offset)
-      .limit(offset);
+  console.log('/' + req.params.id + '/' + req.params.page);
+  const posts = await Post.find({ writer_id: req.params.id }, {})
+    .sort({
+      update_time: -1,
+    })
+    .skip(req.params.page * offset)
+    .limit(offset);
   const retval = {
     data: posts,
   };
