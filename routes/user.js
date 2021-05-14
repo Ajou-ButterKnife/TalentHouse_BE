@@ -19,7 +19,7 @@ router.get('/category/:id', async (req, res, next) => {
 router.get('/nickname/:id', async(req, res) => {
     const userInfo = await User.findOne(
         { _id : req.params.id },
-        { _id : true, nickname : true }
+        { _id : true, nickname : true, profile : true }
     );
 
     const response = {};
@@ -110,6 +110,41 @@ router.put('/:id', async(req, res) => {
             "phone_num": data.phone,
             "nickname": data.nickname,
             "category": data.category,
+        }
+    )
+
+    const response = {}
+
+    if(update.n === 1 && update.nModified === update.n && update.n === update.ok)
+        response['result'] = 'Success';
+    else {
+        response['result'] = 'Fail';
+        response['detail'] = "개인 정보 변경 중 오류가 발생했습니다.\n다시 실행해주세요."
+    }
+
+    res.status(200).send(response);
+});
+
+router.put('/profile/:id', async(req, res) => {
+    const data = req.body;
+    console.log(data)
+
+    const before = await User.findOne(
+        { _id : req.params.id }
+    )
+
+    const update = await User.replaceOne(
+        { _id : req.params.id },
+        {
+            "email" : before.email,
+            "password" : before.password,
+            "profile" : data.profile,
+            "uid" : before.uid,
+            "social_login_flag" : before.social_login_flag,
+            "fcm_key" : before.fcm_key,
+            "phone_num": before.phone_num,
+            "nickname": before.nickname,
+            "category": before.category,
         }
     )
 
