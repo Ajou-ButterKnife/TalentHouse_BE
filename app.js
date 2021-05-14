@@ -17,6 +17,14 @@ mongoose.connect("mongodb://127.0.0.1:27017/testDB", {
 const app = express();
 const port = 4000;
 
+// app.all('/*', function(req, res, next) {
+//   res.header('Access-Control-Allow-Origin', '*');
+//   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+//   res.header('Access-Control-Allow-Headers', 'X-Requested-With,content-type,authorization');
+//   res.header('Access-Control-Allow-Credentials', true);
+//   next();
+// });
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/login", loginRouter);
