@@ -58,7 +58,8 @@ router.put('/password/:id', async(req, res) => {
         .digest('base64');
 
     const before = await User.findOne(
-        { _id : req.params.id }
+        { _id : req.params.id },
+        { password : true },
     );
 
     if(before.password == cryptoPW) {
@@ -67,18 +68,12 @@ router.put('/password/:id', async(req, res) => {
         response['detail'] = "이전과 동일한 비밀번호입니다."
     }
     else {
-        const updatePW = await User.replaceOne(
+        const updatePW = await User.updateOne(
             {_id: req.params.id},
             {
-                password: cryptoPW,
-                "email" : before.email,
-                "profile" : before.profile,
-                "uid" : before.uid,
-                "social_login_flag" : before.social_login_flag,
-                "fcm_key" : before.fcm_key,
-                "phone_num": before.phone_num,
-                "nickname": before.nickname,
-                "category": before.category,
+                $set : {
+                    password: cryptoPW,
+                }
             }
         )
         if(updatePW.n === 1 && updatePW.nModified === updatePW.n && updatePW.n === updatePW.ok)
@@ -95,21 +90,15 @@ router.put('/password/:id', async(req, res) => {
 router.put('/:id', async(req, res) => {
     const data = req.body;
     console.log(data)
-    const before = await User.findOne(
-        { _id : req.params.id }
-    )
-    const update = await User.replaceOne(
+
+    const update = await User.updateOne(
         { _id : req.params.id },
         {
-            "email" : before.email,
-            "password" : before.password,
-            "profile" : before.profile,
-            "uid" : before.uid,
-            "social_login_flag" : before.social_login_flag,
-            "fcm_key" : before.fcm_key,
-            "phone_num": data.phone,
-            "nickname": data.nickname,
-            "category": data.category,
+            $set : {
+                "phone_num": data.phone,
+                "nickname": data.nickname,
+                "category": data.category,
+            }
         }
     )
 
@@ -129,22 +118,12 @@ router.put('/profile/:id', async(req, res) => {
     const data = req.body;
     console.log(data)
 
-    const before = await User.findOne(
-        { _id : req.params.id }
-    )
-
-    const update = await User.replaceOne(
+    const update = await User.updateOne(
         { _id : req.params.id },
         {
-            "email" : before.email,
-            "password" : before.password,
-            "profile" : data.profile,
-            "uid" : before.uid,
-            "social_login_flag" : before.social_login_flag,
-            "fcm_key" : before.fcm_key,
-            "phone_num": before.phone_num,
-            "nickname": before.nickname,
-            "category": before.category,
+            $set : {
+                "profile" : data.profile,
+            }
         }
     )
 
