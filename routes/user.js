@@ -76,8 +76,11 @@ router.put('/password/:id', async(req, res) => {
                 }
             }
         )
-        if(updatePW.n === 1 && updatePW.nModified === updatePW.n && updatePW.n === updatePW.ok)
+        if(update.n === 1 && update.n === update.ok) {
             response['result'] = 'Success';
+            if(update.nModified == 0)
+                response['detail'] = '같은 내용입니다.'
+        }
         else {
             response['result'] = 'Fail';
             response['detail'] = "비밀번호 변경 중 오류가 발생했습니다.\n다시 실행해주세요."
@@ -104,8 +107,11 @@ router.put('/:id', async(req, res) => {
 
     const response = {}
 
-    if(update.n === 1 && update.nModified === update.n && update.n === update.ok)
+    if(update.n === 1 && update.n === update.ok) {
         response['result'] = 'Success';
+        if(update.nModified == 0)
+            response['detail'] = '같은 내용입니다.'
+    }
     else {
         response['result'] = 'Fail';
         response['detail'] = "개인 정보 변경 중 오류가 발생했습니다.\n다시 실행해주세요."
@@ -129,8 +135,11 @@ router.put('/profile/:id', async(req, res) => {
 
     const response = {}
 
-    if(update.n === 1 && update.nModified === update.n && update.n === update.ok)
+    if(update.n === 1 && update.n === update.ok) {
         response['result'] = 'Success';
+        if(update.nModified == 0)
+            response['detail'] = '같은 내용입니다.'
+    }
     else {
         response['result'] = 'Fail';
         response['detail'] = "개인 정보 변경 중 오류가 발생했습니다.\n다시 실행해주세요."
