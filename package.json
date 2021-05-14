@@ -13,7 +13,7 @@
     "body-parser": "^1.19.0",
     "crypto": "^1.0.1",
     "express": "^4.17.1",
-    "firebase-admin": "^9.6.0",
+    "firebase-admin": "^9.8.0",
     "mongoose": "^5.12.3",
     "mongoose-auto-increment": "^5.0.1",
     "nodemon": "^2.0.7"

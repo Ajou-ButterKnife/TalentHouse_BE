@@ -6,6 +6,7 @@ const loginRouter = require("./routes/login");
 const signupRouter = require("./routes/signup");
 const postRouter = require("./routes/post");
 const userRouter = require("./routes/user");
+const fcmRouter = require("./routes/fcm");
 
 mongoose.connect("mongodb://127.0.0.1:27017/testDB", {
   useNewUrlParser: true,
@@ -31,6 +32,7 @@ app.use("/login", loginRouter);
 app.use("/signup", signupRouter);
 app.use("/post", postRouter);
 app.use("/user", userRouter);
+app.use("/fcm", fcmRouter);
 
 app.get("/", (req, res) => {
   res.send("This is App Server!!");
