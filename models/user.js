@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
   email: {
@@ -21,6 +21,10 @@ const UserSchema = new mongoose.Schema({
   fcm_key: { type: String },
   category: { type: Array },
   nickname: { type: String },
+  like_post: {
+    type: [String],
+    default: [],
+  },
 });
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model("User", UserSchema);

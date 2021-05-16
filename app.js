@@ -1,6 +1,6 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 
 const loginRouter = require("./routes/login");
 const signupRouter = require("./routes/signup");
@@ -8,7 +8,7 @@ const postRouter = require("./routes/post");
 const userRouter = require("./routes/user");
 const fcmRouter = require("./routes/fcm");
 
-mongoose.connect("mongodb://127.0.0.1:27017/testDB", {
+mongoose.connect('mongodb://127.0.0.1:27017/testDB', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useFindAndModify: false,
@@ -34,8 +34,8 @@ app.use("/post", postRouter);
 app.use("/user", userRouter);
 app.use("/fcm", fcmRouter);
 
-app.get("/", (req, res) => {
-  res.send("This is App Server!!");
+app.get('/', (req, res) => {
+  res.send('This is App Server!!');
 });
 
 app.listen(port, () => {
