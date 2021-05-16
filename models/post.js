@@ -7,7 +7,6 @@ const PostSchema = new mongoose.Schema({
   },
   writer_nickname: {
     type: String,
-//    required: true,
   },
   category: {
     type: String,
@@ -33,6 +32,10 @@ const PostSchema = new mongoose.Schema({
   like_cnt: {
     type: Number,
     default: 0,
+  },
+  like_IDs: {
+    type: [String],
+    default: [],
   },
   comments: {
     type: [Object],
