@@ -1,14 +1,15 @@
-const Post = require('../models/post');
-const express = require('express');
+const Post = require("../models/post");
+const User = require("../models/user");
+const express = require("express");
 const router = express.Router();
 
 const offset = 10;
 
-router.get('/', async (req, res, next) => {
+router.get("/", async (req, res, next) => {
   console.log(req.query.page);
   console.log(req.query.category);
 
-  const categoryTemp = req.query.category.split('-');
+  const categoryTemp = req.query.category.split("-");
 
   const posts = await Post.find({
     category: { $in: categoryTemp },
@@ -23,12 +24,11 @@ router.get('/', async (req, res, next) => {
   const retval = {
     data: posts,
   };
-
   res.status(200).send(retval);
 });
 
-router.get('/:id/:page', async (req, res, next) => {
-  console.log('/' + req.params.id + '/' + req.params.page);
+router.get("/:id/:page", async (req, res, next) => {
+  console.log("/" + req.params.id + "/" + req.params.page);
   const posts = await Post.find({ writer_id: req.params.id }, {})
     .sort({
       update_time: -1,
@@ -41,7 +41,7 @@ router.get('/:id/:page', async (req, res, next) => {
   res.status(200).send(retval);
 });
 
-router.post('/create', async (req, res) => {
+router.post("/create", async (req, res) => {
   var data = req.body;
 
   const post = new Post({
@@ -56,25 +56,24 @@ router.post('/create', async (req, res) => {
   });
   post.save((err) => {
     if (err) {
-      res.status(500).json({ result: 'Fail' });
+      res.status(500).json({ result: "Fail" });
     } else {
-      res.status(200).json({ result: 'Success' });
+      res.status(200).json({ result: "Success" });
     }
   });
 });
 
-router.get('/comment/:id', (req, res) => {
+router.get("/comment/:id", (req, res) => {
   console.log(req.params.id);
 
   const p = Post.findById(req.params.id)
     .then((p) => {
-      res.status(200).json({ result: 'Success', data: p.comments });
+      res.status(200).json({ result: "Success", data: p.comments });
     })
-    .catch((err) => res.status(500).json({ result: 'Fail' }));
+    .catch((err) => res.status(500).json({ result: "Fail" }));
 });
 
-router.post('/comment/create', async (req, res) => {
-  console.log('Post comment/create');
+router.post("/comment/create", async (req, res) => {
   data = req.body;
   content_id = data._id;
   const newComment = {
@@ -86,11 +85,80 @@ router.post('/comment/create', async (req, res) => {
 
   Post.updateOne({ _id: content_id }, { $push: { comments: newComment } })
     .then(() => {
-      res.status(200).json({ result: 'Success', data: newComment });
+      res.status(200).json({ result: "Success", data: newComment });
     })
     .catch((err) => {
-      res.status(500).json({ result: 'Fail' });
+      res.status(500).json({ result: "Fail" });
     });
+});
+
+router.put("/like/:postId/:userId", (req, res) => {
+  const data = req.params;
+  post_Id = data.postId;
+  user_Id = data.userId;
+
+  Post.findById(post_Id).then((post) => {
+    const like_IDs = post.like_IDs;
+    var check = true;
+    for (var i = 0; i < like_IDs.length; i++) {
+      if (like_IDs[i] == user_Id) {
+        check = false;
+        break;
+      }
+    }
+
+    if (check == true) {
+      // 좋아요
+      Post.updateOne({ _id: post_Id }, { $push: { like_IDs: user_Id } }).then(
+        () => {
+          temp_like_cnt = post.like_cnt + 1;
+          Post.findByIdAndUpdate(
+            post_Id,
+            { like_cnt: temp_like_cnt },
+            (err, data) => {
+              if (err) {
+                res.status(500).json({ result: "Fail" });
+              } else {
+                User.updateOne(
+                  { _id: user_Id },
+                  { $push: { like_post: post_Id } }
+                ).then(() => {
+                  res
+                    .status(200)
+                    .json({ result: "Plus", likeCnt: temp_like_cnt });
+                });
+              }
+            }
+          );
+        }
+      );
+    } else {
+      // 좋아요 취소
+      Post.updateOne({ _id: post_Id }, { $pull: { like_IDs: user_Id } }).then(
+        () => {
+          temp_like_cnt = post.like_cnt - 1;
+          Post.findByIdAndUpdate(
+            post_Id,
+            { like_cnt: temp_like_cnt },
+            (err, data) => {
+              if (err) {
+                res.status(500).json({ result: "Fail" });
+              } else {
+                User.updateOne(
+                  { _id: user_Id },
+                  { $pull: { like_post: post_Id } }
+                ).then(() => {
+                  res
+                    .status(200)
+                    .json({ result: "Minus", likeCnt: temp_like_cnt });
+                });
+              }
+            }
+          );
+        }
+      );
+    }
+  });
 });
 
 module.exports = router;
