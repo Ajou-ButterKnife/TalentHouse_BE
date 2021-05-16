@@ -27,8 +27,42 @@ router.get("/", async (req, res, next) => {
   res.status(200).send(retval);
 });
 
-router.get("/:id/:page", async (req, res, next) => {
-  console.log("/" + req.params.id + "/" + req.params.page);
+router.get('/search', async (req, res, next) => {
+  const offset = 3;
+  if (req.query.search_type == 1) {
+    // 작성자 검색
+    const posts = await Post.find({
+      writer_nickname: req.query.search_item,
+    })
+      .sort({
+        update_time: -1,
+      })
+      .skip(req.query.page * offset)
+      .limit(offset);
+    const retval = {
+      data: posts,
+    };
+    res.status(200).json(retval);
+  } else {
+    // 글 제목 검색
+    const query = new RegExp(req.query.search_item);
+    const posts = await Post.find({
+      title: query,
+    })
+      .sort({
+        update_time: -1,
+      })
+      .skip(req.query.page * offset)
+      .limit(offset);
+    const retval = {
+      data: posts,
+    };
+    res.status(200).json(retval);
+  }
+});
+
+router.get('/:id/:page', async (req, res, next) => {
+  console.log('/' + req.params.id + '/' + req.params.page);
   const posts = await Post.find({ writer_id: req.params.id }, {})
     .sort({
       update_time: -1,
