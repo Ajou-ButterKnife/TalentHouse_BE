@@ -43,6 +43,8 @@ router.get("/test", async(req, res) => {
             tokenList.push(list[i].fcm_key)
 
     await util.sendFcm("title", "body", tokenList)
+
+    res.status(200).send(list)
 })
 
 module.exports = router

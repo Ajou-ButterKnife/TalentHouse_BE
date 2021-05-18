@@ -4,7 +4,7 @@ const value = {};
 
 value.sendFcm = async function(title, body, fbTokenList) {
     const fcmMessage = {
-        notification: {
+        data : {
             title: title,
             body: body,
         },
