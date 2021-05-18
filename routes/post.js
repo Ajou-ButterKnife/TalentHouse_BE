@@ -1,6 +1,7 @@
 const Post = require("../models/post");
 const User = require("../models/user");
 const express = require("express");
+const { response } = require("express");
 const router = express.Router();
 
 const offset = 10;
@@ -27,7 +28,7 @@ router.get("/", async (req, res, next) => {
   res.status(200).send(retval);
 });
 
-router.get('/search', async (req, res, next) => {
+router.get("/search", async (req, res, next) => {
   const offset = 3;
   if (req.query.search_type == 1) {
     // 작성자 검색
@@ -61,8 +62,8 @@ router.get('/search', async (req, res, next) => {
   }
 });
 
-router.get('/:id/:page', async (req, res, next) => {
-  console.log('/' + req.params.id + '/' + req.params.page);
+router.get("/:id/:page", async (req, res, next) => {
+  console.log("/" + req.params.id + "/" + req.params.page);
   const posts = await Post.find({ writer_id: req.params.id }, {})
     .sort({
       update_time: -1,
@@ -97,10 +98,8 @@ router.post("/create", async (req, res) => {
   });
 });
 
-router.get("/comment/:id", (req, res) => {
-  console.log(req.params.id);
-
-  const p = Post.findById(req.params.id)
+router.post("/comment", (req, res) => {
+  Post.findById(req.body.postId)
     .then((p) => {
       res.status(200).json({ result: "Success", data: p.comments });
     })
@@ -126,10 +125,49 @@ router.post("/comment/create", async (req, res) => {
     });
 });
 
+router.post("/favorite", async (req, res) => {
+  console.log(req.body);
+  const post_id = req.body.postId;
+
+  Post.findById(post_id).then((post) => {
+    const response = {
+      data: post.like_IDs,
+    };
+    res.status(200).json(response);
+  });
+});
+
+router.post("/favoritePost", async (req, res) => {
+  console.log(req.body.postIdList);
+
+  const postIdList = req.body.postIdList;
+  var postArr = [];
+
+  for (var postId of postIdList) {
+    const postObject = await Post.findById(postId);
+    postArr.push(postObject);
+  }
+  const response = {
+    data: postArr,
+  };
+  res.status(200).send(response);
+});
+
+// router.get("/post/:id", async (req, res) => {
+//   const user_id = req.params.id;
+//   User.findById(user_id).then((user) => {
+//     const response = {
+//       data: user.like_post,
+//     };
+//     res.status(200).json(response);
+//   });
+// });
+
 router.put("/like/:postId/:userId", (req, res) => {
+  console.log("PUT");
   const data = req.params;
-  post_Id = data.postId;
-  user_Id = data.userId;
+  const post_Id = data.postId;
+  const user_Id = data.userId;
 
   Post.findById(post_Id).then((post) => {
     const like_IDs = post.like_IDs;
