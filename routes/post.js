@@ -1,16 +1,20 @@
+
 const Post = require("../models/post");
 const User = require("../models/user");
 const express = require("express");
 const { response } = require("express");
+
 const router = express.Router();
 
 const offset = 10;
 
-router.get("/", async (req, res, next) => {
-  console.log(req.query.page);
-  console.log(req.query.category);
-
-  const categoryTemp = req.query.category.split("-");
+router.get('/', async (req, res, next) => {
+  let categoryTemp;
+  if (req.query.category != 'all') {
+    categoryTemp = req.query.category.split('-');
+  } else {
+    categoryTemp = ['춤', '노래', '랩', '그림', '사진', '기타'];
+  }
 
   const posts = await Post.find({
     category: { $in: categoryTemp },
@@ -28,7 +32,28 @@ router.get("/", async (req, res, next) => {
   res.status(200).send(retval);
 });
 
-router.get("/search", async (req, res, next) => {
+router.get('/hot', async (req, res, next) => {
+  const startDate = new Date(req.query.startDate);
+  const endDate = new Date(req.query.endDate);
+
+  const posts = await Post.find({
+    update_time: { $gt: startDate, $lt: endDate },
+  })
+    .distinct('category')
+    .sort({
+      update_time: -1,
+    })
+    .skip(req.query.page * offset)
+    .limit(offset);
+
+  console.log(posts);
+  const retval = {
+    data: posts,
+  };
+  res.status(200).send(retval);
+});
+
+router.get('/search', async (req, res, next) => {
   const offset = 3;
   if (req.query.search_type == 1) {
     // 작성자 검색
@@ -76,7 +101,7 @@ router.get("/:id/:page", async (req, res, next) => {
   res.status(200).send(retval);
 });
 
-router.post("/create", async (req, res) => {
+router.post('/create', async (req, res) => {
   var data = req.body;
 
   const post = new Post({
@@ -91,22 +116,22 @@ router.post("/create", async (req, res) => {
   });
   post.save((err) => {
     if (err) {
-      res.status(500).json({ result: "Fail" });
+      res.status(500).json({ result: 'Fail' });
     } else {
-      res.status(200).json({ result: "Success" });
+      res.status(200).json({ result: 'Success' });
     }
   });
 });
 
 router.post("/comment", (req, res) => {
-  Post.findById(req.body.postId)
+  const p = Post.findById(req.params.id)
     .then((p) => {
-      res.status(200).json({ result: "Success", data: p.comments });
+      res.status(200).json({ result: 'Success', data: p.comments });
     })
-    .catch((err) => res.status(500).json({ result: "Fail" }));
+    .catch((err) => res.status(500).json({ result: 'Fail' }));
 });
 
-router.post("/comment/create", async (req, res) => {
+router.post('/comment/create', async (req, res) => {
   data = req.body;
   content_id = data._id;
   const newComment = {
@@ -118,10 +143,10 @@ router.post("/comment/create", async (req, res) => {
 
   Post.updateOne({ _id: content_id }, { $push: { comments: newComment } })
     .then(() => {
-      res.status(200).json({ result: "Success", data: newComment });
+      res.status(200).json({ result: 'Success', data: newComment });
     })
     .catch((err) => {
-      res.status(500).json({ result: "Fail" });
+      res.status(500).json({ result: 'Fail' });
     });
 });
 
@@ -153,18 +178,8 @@ router.post("/favoritePost", async (req, res) => {
   res.status(200).send(response);
 });
 
-// router.get("/post/:id", async (req, res) => {
-//   const user_id = req.params.id;
-//   User.findById(user_id).then((user) => {
-//     const response = {
-//       data: user.like_post,
-//     };
-//     res.status(200).json(response);
-//   });
-// });
 
-router.put("/like/:postId/:userId", (req, res) => {
-  console.log("PUT");
+router.put('/like/:postId/:userId', (req, res) => {
   const data = req.params;
   const post_Id = data.postId;
   const user_Id = data.userId;
@@ -189,7 +204,7 @@ router.put("/like/:postId/:userId", (req, res) => {
             { like_cnt: temp_like_cnt },
             (err, data) => {
               if (err) {
-                res.status(500).json({ result: "Fail" });
+                res.status(500).json({ result: 'Fail' });
               } else {
                 User.updateOne(
                   { _id: user_Id },
@@ -197,7 +212,7 @@ router.put("/like/:postId/:userId", (req, res) => {
                 ).then(() => {
                   res
                     .status(200)
-                    .json({ result: "Plus", likeCnt: temp_like_cnt });
+                    .json({ result: 'Plus', likeCnt: temp_like_cnt });
                 });
               }
             }
@@ -214,7 +229,7 @@ router.put("/like/:postId/:userId", (req, res) => {
             { like_cnt: temp_like_cnt },
             (err, data) => {
               if (err) {
-                res.status(500).json({ result: "Fail" });
+                res.status(500).json({ result: 'Fail' });
               } else {
                 User.updateOne(
                   { _id: user_Id },
@@ -222,7 +237,7 @@ router.put("/like/:postId/:userId", (req, res) => {
                 ).then(() => {
                   res
                     .status(200)
-                    .json({ result: "Minus", likeCnt: temp_like_cnt });
+                    .json({ result: 'Minus', likeCnt: temp_like_cnt });
                 });
               }
             }
