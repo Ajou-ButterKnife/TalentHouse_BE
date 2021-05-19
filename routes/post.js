@@ -248,4 +248,84 @@ router.put('/like/:postId/:userId', (req, res) => {
   });
 });
 
+router.put('/', async (req, res) => {
+  var data = req.body;
+
+  console.log(data);
+  const updatePost = await Post.updateOne(
+      { _id : data.id },
+      { $set : {
+          category : data.category,
+          title: data.title,
+          description: data.description,
+          image_url: data.imageUrl,
+          video_url: data.videoUrl,
+          update_time: Date.now(),
+        }}
+  );
+
+  const response = {};
+
+  if (updatePost.n === 1 && updatePost.n === updatePost.ok) {
+    response["result"] = "Success";
+    if (updatePost.nModified == 0) response["detail"] = "같은 내용입니다.";
+  } else {
+    response["result"] = "Fail";
+    response["detail"] =
+        "개인 정보 변경 중 오류가 발생했습니다.\n다시 실행해주세요.";
+  }
+
+  res.status(200).send(response);
+});
+
+router.delete("/:writer_id", async(req, res) => {
+  const post_id = req.body._id;
+
+  const del = await Post.deleteOne( {
+    writer_id : req.params.writer_id,
+    _id : post_id
+  });
+
+  console.log(del);
+
+  const user = await User.find(
+      { like_post : post_id },
+      { _id : true, like_post : true}
+  )
+
+  for(var i = 0; i < Object.keys(user).length; i++) {
+    const temp_id = user[i]._id;
+    const temp_arr = Array.from(user[i].like_post);
+    const remove_idx = temp_arr.indexOf(post_id)
+    if(remove_idx > -1) {
+      temp_arr.splice(remove_idx, 1)
+    }
+    const aaa = await User.updateOne(
+        { _id : temp_id },
+        {
+          $set: {
+            like_post : temp_arr
+          },
+        }
+    )
+    console.log(aaa)
+  }
+
+  const response = {};
+
+  if(del.n == 0) {
+    response["result"] = "Fail";
+    response["detail"] = "잘못된 경로입니다.";
+  }
+  else if (del.n === 1 && del.n === del.ok) {
+    response["result"] = "Success";
+  } else {
+    response["result"] = "Fail";
+    response["detail"] =
+        "게시글 삭제 중 오류가 발생했습니다.\n다시 실행해주세요.";
+  }
+
+  res.status(200).send(response);
+})
+
 module.exports = router;
