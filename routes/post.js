@@ -24,7 +24,6 @@ router.get("/", async (req, res, next) => {
     .skip(req.query.page * offset)
     .limit(offset);
 
-  console.log(posts);
   const retval = {
     data: posts,
   };
@@ -86,8 +85,8 @@ router.get("/search", async (req, res, next) => {
   }
 });
 
-router.get("/:id/:page", async (req, res, next) => {
-  console.log("/" + req.params.id + "/" + req.params.page);
+router.get('/:id/:page', async (req, res, next) => {
+  console.log('/' + req.params.id + '/' + req.params.page);
   const posts = await Post.find({ writer_id: req.params.id }, {})
     .sort({
       update_time: -1,
@@ -222,7 +221,6 @@ router.post("/favorite", async (req, res) => {
 
 router.post("/favoritePost", async (req, res) => {
   console.log("/favoritePost");
-
   const postIdList = req.body.postIdList;
   var postArr = [];
 
