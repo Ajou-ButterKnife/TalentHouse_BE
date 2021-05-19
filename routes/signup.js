@@ -45,7 +45,7 @@ router.post("/normal", async (req, res) => {
   });
 });
 
-router.post("/social", async (req, res, next) => {
+router.post('/social', async (req, res, next) => {
   var data = req.body;
 
   var userInfo = await admin.auth().getUser(data.uid);
@@ -56,12 +56,21 @@ router.post("/social", async (req, res, next) => {
     category: data.category,
     uid: data.uid,
   });
+
+  const asdf = await User.findOne({
+    nickname : data.nickname
+  });
   user.save((err) => {
     if (err) {
       //console.log(err);
-      res.status(200).json({ result: "Fail" });
+      res.status(200).json({ result: 'Fail' });
     } else {
-      res.status(200).json({ result: "Success" });
+      res.status(200).json({
+        result: 'Success' ,
+        data : {
+          _id: asdf._id,
+          nickname: asdf.nickname,
+        }});
     }
   });
 });
