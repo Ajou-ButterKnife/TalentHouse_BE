@@ -1,8 +1,7 @@
-
-const Post = require("../models/post");
-const User = require("../models/user");
-const express = require("express");
-const { response } = require("express");
+const Post = require('../models/post');
+const User = require('../models/user');
+const express = require('express');
+const { response } = require('express');
 
 const router = express.Router();
 
@@ -25,7 +24,6 @@ router.get('/', async (req, res, next) => {
     .skip(req.query.page * offset)
     .limit(offset);
 
-  console.log(posts);
   const retval = {
     data: posts,
   };
@@ -87,8 +85,8 @@ router.get('/search', async (req, res, next) => {
   }
 });
 
-router.get("/:id/:page", async (req, res, next) => {
-  console.log("/" + req.params.id + "/" + req.params.page);
+router.get('/:id/:page', async (req, res, next) => {
+  console.log('/' + req.params.id + '/' + req.params.page);
   const posts = await Post.find({ writer_id: req.params.id }, {})
     .sort({
       update_time: -1,
@@ -123,7 +121,7 @@ router.post('/create', async (req, res) => {
   });
 });
 
-router.post("/comment", (req, res) => {
+router.post('/comment', (req, res) => {
   const p = Post.findById(req.params.id)
     .then((p) => {
       res.status(200).json({ result: 'Success', data: p.comments });
@@ -150,7 +148,7 @@ router.post('/comment/create', async (req, res) => {
     });
 });
 
-router.post("/favorite", async (req, res) => {
+router.post('/favorite', async (req, res) => {
   console.log(req.body);
   const post_id = req.body.postId;
 
@@ -162,7 +160,7 @@ router.post("/favorite", async (req, res) => {
   });
 });
 
-router.post("/favoritePost", async (req, res) => {
+router.post('/favoritePost', async (req, res) => {
   console.log(req.body.postIdList);
 
   const postIdList = req.body.postIdList;
@@ -177,7 +175,6 @@ router.post("/favoritePost", async (req, res) => {
   };
   res.status(200).send(response);
 });
-
 
 router.put('/like/:postId/:userId', (req, res) => {
   const data = req.params;
