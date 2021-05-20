@@ -1,18 +1,18 @@
-const Post = require("../models/post");
-const User = require("../models/user");
-const express = require("express");
-const { response } = require("express");
+const Post = require('../models/post');
+const User = require('../models/user');
+const express = require('express');
+const { response } = require('express');
 
 const router = express.Router();
 
 const offset = 10;
 
-router.get("/", async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   let categoryTemp;
-  if (req.query.category != "all") {
-    categoryTemp = req.query.category.split("-");
+  if (req.query.category != 'all') {
+    categoryTemp = req.query.category.split('-');
   } else {
-    categoryTemp = ["춤", "노래", "랩", "그림", "사진", "기타"];
+    categoryTemp = ['춤', '노래', '랩', '그림', '사진', '기타'];
   }
 
   const posts = await Post.find({
@@ -30,28 +30,91 @@ router.get("/", async (req, res, next) => {
   res.status(200).send(retval);
 });
 
-router.get("/hot", async (req, res, next) => {
+router.get('/hot', async (req, res, next) => {
   const startDate = new Date(req.query.startDate);
-  const endDate = new Date(req.query.endDate);
+  let endDate = new Date(req.query.endDate);
+  endDate.setDate(endDate.getDate() + 1);
+  console.log(startDate);
+  console.log(endDate);
+  let retval = { data: [] };
 
   const posts = await Post.find({
-    update_time: { $gt: startDate, $lt: endDate },
+    update_time: { $gte: startDate, $lte: endDate },
+    category: '춤',
   })
-    .distinct("category")
     .sort({
-      update_time: -1,
+      like_cnt: -1,
     })
-    .skip(req.query.page * offset)
-    .limit(offset);
+    .limit(3);
 
-  console.log(posts);
-  const retval = {
-    data: posts,
-  };
+  const posts2 = await Post.find({
+    update_time: { $gte: startDate, $lte: endDate },
+    category: '노래',
+  })
+    .sort({
+      like_cnt: -1,
+    })
+    .limit(3);
+
+  const posts3 = await Post.find({
+    update_time: { $gte: startDate, $lte: endDate },
+    category: '랩',
+  })
+    .sort({
+      like_cnt: -1,
+    })
+    .limit(3);
+
+  const posts4 = await Post.find({
+    update_time: { $gte: startDate, $lte: endDate },
+    category: '그림',
+  })
+    .sort({
+      like_cnt: -1,
+    })
+    .limit(3);
+
+  const posts5 = await Post.find({
+    update_time: { $gte: startDate, $lte: endDate },
+    category: '사진',
+  })
+    .sort({
+      like_cnt: -1,
+    })
+    .limit(3);
+
+  const posts6 = await Post.find({
+    update_time: { $gte: startDate, $lte: endDate },
+    category: '기타',
+  })
+    .sort({
+      like_cnt: -1,
+    })
+    .limit(3);
+
+  for (let i = 0; i < 3; i++) {
+    if (posts[i] != null) retval.data.push(posts[i]);
+  }
+  for (let i = 0; i < 3; i++) {
+    if (posts2[i] != null) retval.data.push(posts2[i]);
+  }
+  for (let i = 0; i < 3; i++) {
+    if (posts3[i] != null) retval.data.push(posts3[i]);
+  }
+  for (let i = 0; i < 3; i++) {
+    if (posts4[i] != null) retval.data.push(posts4[i]);
+  }
+  for (let i = 0; i < 3; i++) {
+    if (posts5[i] != null) retval.data.push(posts5[i]);
+  }
+  for (let i = 0; i < 3; i++) {
+    if (posts6[i] != null) retval.data.push(posts6[i]);
+  }
+  console.log(retval);
   res.status(200).send(retval);
 });
 
-router.get("/search", async (req, res, next) => {
+router.get('/search', async (req, res, next) => {
   const offset = 3;
   if (req.query.search_type == 1) {
     // 작성자 검색
@@ -99,7 +162,7 @@ router.get('/:id/:page', async (req, res, next) => {
   res.status(200).send(retval);
 });
 
-router.post("/create", async (req, res) => {
+router.post('/create', async (req, res) => {
   var data = req.body;
 
   const post = new Post({
@@ -114,24 +177,24 @@ router.post("/create", async (req, res) => {
   });
   post.save((err) => {
     if (err) {
-      res.status(500).json({ result: "Fail" });
+      res.status(500).json({ result: 'Fail' });
     } else {
-      res.status(200).json({ result: "Success" });
+      res.status(200).json({ result: 'Success' });
     }
   });
 });
 
-router.post("/comment/:id", async (req, res) => {
-  console.log("/comment/:id");
+router.post('/comment/:id', async (req, res) => {
+  console.log('/comment/:id');
   Post.findById(req.params.id)
     .then((p) => {
-      res.status(200).json({ result: "Success", data: p.comments });
+      res.status(200).json({ result: 'Success', data: p.comments });
     })
-    .catch((err) => res.status(500).json({ result: "Fail" }));
+    .catch((err) => res.status(500).json({ result: 'Fail' }));
 });
 
-router.post("/create/comment", async (req, res) => {
-  console.log("/create/comment");
+router.post('/create/comment', async (req, res) => {
+  console.log('/create/comment');
   const data = req.body;
   const post_id = data.postId;
   const newComment = {
@@ -144,15 +207,15 @@ router.post("/create/comment", async (req, res) => {
 
   Post.updateOne({ _id: post_id }, { $push: { comments: newComment } })
     .then(() => {
-      res.status(200).json({ result: "Success", data: newComment });
+      res.status(200).json({ result: 'Success', data: newComment });
     })
     .catch((err) => {
-      res.status(500).json({ result: "Fail" });
+      res.status(500).json({ result: 'Fail' });
     });
 });
 
-router.delete("/delete/comment", async (req, res) => {
-  console.log("/delete/comment");
+router.delete('/delete/comment', async (req, res) => {
+  console.log('/delete/comment');
 
   const post_id = req.body.postId;
   const user_id = req.body.userId;
@@ -163,16 +226,16 @@ router.delete("/delete/comment", async (req, res) => {
     { $pull: { comments: { writer_id: user_id, date: date } } }
   )
     .then(() => {
-      res.status(200).json({ result: "Success" });
+      res.status(200).json({ result: 'Success' });
     })
     .catch((err) => {
       console.log(err);
-      res.status(500).json({ result: "Fail" });
+      res.status(500).json({ result: 'Fail' });
     });
 });
 
-router.put("/update/comment/:id", async (req, res) => {
-  console.log("/update/comment");
+router.put('/update/comment/:id', async (req, res) => {
+  console.log('/update/comment');
   const post_id = req.params.id;
   const user_id = req.body.userId;
   const comment_date = req.body.date;
@@ -198,17 +261,17 @@ router.put("/update/comment/:id", async (req, res) => {
       (err, data) => {
         if (err) {
           console.log(err);
-          res.status(500).json({ result: "Fail" });
+          res.status(500).json({ result: 'Fail' });
         } else {
-          res.status(200).json({ result: "Success", data: response_comment });
+          res.status(200).json({ result: 'Success', data: response_comment });
         }
       }
     );
   });
 });
 
-router.post("/favorite", async (req, res) => {
-  console.log("/favorite");
+router.post('/favorite', async (req, res) => {
+  console.log('/favorite');
   const post_id = req.body.postId;
 
   Post.findById(post_id).then((post) => {
@@ -219,8 +282,8 @@ router.post("/favorite", async (req, res) => {
   });
 });
 
-router.post("/favoritePost", async (req, res) => {
-  console.log("/favoritePost");
+router.post('/favoritePost', async (req, res) => {
+  console.log('/favoritePost');
   const postIdList = req.body.postIdList;
   var postArr = [];
 
@@ -234,7 +297,7 @@ router.post("/favoritePost", async (req, res) => {
   res.status(200).send(response);
 });
 
-router.put("/like/:postId/:userId", (req, res) => {
+router.put('/like/:postId/:userId', (req, res) => {
   const data = req.params;
   const post_Id = data.postId;
   const user_Id = data.userId;
@@ -259,7 +322,7 @@ router.put("/like/:postId/:userId", (req, res) => {
             { like_cnt: temp_like_cnt },
             (err, data) => {
               if (err) {
-                res.status(500).json({ result: "Fail" });
+                res.status(500).json({ result: 'Fail' });
               } else {
                 User.updateOne(
                   { _id: user_Id },
@@ -267,7 +330,7 @@ router.put("/like/:postId/:userId", (req, res) => {
                 ).then(() => {
                   res
                     .status(200)
-                    .json({ result: "Plus", likeCnt: temp_like_cnt });
+                    .json({ result: 'Plus', likeCnt: temp_like_cnt });
                 });
               }
             }
@@ -284,7 +347,7 @@ router.put("/like/:postId/:userId", (req, res) => {
             { like_cnt: temp_like_cnt },
             (err, data) => {
               if (err) {
-                res.status(500).json({ result: "Fail" });
+                res.status(500).json({ result: 'Fail' });
               } else {
                 User.updateOne(
                   { _id: user_Id },
@@ -292,7 +355,7 @@ router.put("/like/:postId/:userId", (req, res) => {
                 ).then(() => {
                   res
                     .status(200)
-                    .json({ result: "Minus", likeCnt: temp_like_cnt });
+                    .json({ result: 'Minus', likeCnt: temp_like_cnt });
                 });
               }
             }
@@ -308,79 +371,80 @@ router.put('/', async (req, res) => {
 
   console.log(data);
   const updatePost = await Post.updateOne(
-      { _id : data.id },
-      { $set : {
-          category : data.category,
-          title: data.title,
-          description: data.description,
-          image_url: data.imageUrl,
-          video_url: data.videoUrl,
-          update_time: Date.now(),
-        }}
+    { _id: data.id },
+    {
+      $set: {
+        category: data.category,
+        title: data.title,
+        description: data.description,
+        image_url: data.imageUrl,
+        video_url: data.videoUrl,
+        update_time: Date.now(),
+      },
+    }
   );
 
   const response = {};
 
   if (updatePost.n === 1 && updatePost.n === updatePost.ok) {
-    response["result"] = "Success";
-    if (updatePost.nModified == 0) response["detail"] = "같은 내용입니다.";
+    response['result'] = 'Success';
+    if (updatePost.nModified == 0) response['detail'] = '같은 내용입니다.';
   } else {
-    response["result"] = "Fail";
-    response["detail"] =
-        "개인 정보 변경 중 오류가 발생했습니다.\n다시 실행해주세요.";
+    response['result'] = 'Fail';
+    response['detail'] =
+      '개인 정보 변경 중 오류가 발생했습니다.\n다시 실행해주세요.';
   }
 
   res.status(200).send(response);
 });
 
-router.delete("/:writer_id", async(req, res) => {
+router.delete('/:writer_id', async (req, res) => {
   const post_id = req.body._id;
 
-  const del = await Post.deleteOne( {
-    writer_id : req.params.writer_id,
-    _id : post_id
+  const del = await Post.deleteOne({
+    writer_id: req.params.writer_id,
+    _id: post_id,
   });
 
   console.log(del);
 
   const user = await User.find(
-      { like_post : post_id },
-      { _id : true, like_post : true}
-  )
+    { like_post: post_id },
+    { _id: true, like_post: true }
+  );
 
-  for(var i = 0; i < Object.keys(user).length; i++) {
+  for (var i = 0; i < Object.keys(user).length; i++) {
     const temp_id = user[i]._id;
     const temp_arr = Array.from(user[i].like_post);
-    const remove_idx = temp_arr.indexOf(post_id)
-    if(remove_idx > -1) {
-      temp_arr.splice(remove_idx, 1)
+    const remove_idx = temp_arr.indexOf(post_id);
+    if (remove_idx > -1) {
+      temp_arr.splice(remove_idx, 1);
     }
     const aaa = await User.updateOne(
-        { _id : temp_id },
-        {
-          $set: {
-            like_post : temp_arr
-          },
-        }
-    )
-    console.log(aaa)
+      { _id: temp_id },
+      {
+        $set: {
+          like_post: temp_arr,
+        },
+      }
+    );
+    console.log(aaa);
   }
 
   const response = {};
 
-  if(del.n == 0) {
-    response["result"] = "Fail";
-    response["detail"] = "잘못된 경로입니다.";
-  }
-  else if (del.n === 1 && del.n === del.ok) {
-    response["result"] = "Success";
+  if (del.n == 0) {
+    response['result'] = 'Fail';
+    response['detail'] = '잘못된 경로입니다.';
+  } else if (del.n === 1 && del.n === del.ok) {
+    response['result'] = 'Success';
   } else {
-    response["result"] = "Fail";
-    response["detail"] =
-        "게시글 삭제 중 오류가 발생했습니다.\n다시 실행해주세요.";
+    response['result'] = 'Fail';
+    response['detail'] =
+      '게시글 삭제 중 오류가 발생했습니다.\n다시 실행해주세요.';
   }
 
   res.status(200).send(response);
-})
+});
 
 module.exports = router;
