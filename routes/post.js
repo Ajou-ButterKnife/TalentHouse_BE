@@ -219,18 +219,32 @@ router.post("/favorite", async (req, res) => {
   });
 });
 
-router.post("/favoritePost", async (req, res) => {
-  console.log("/favoritePost");
-  const postIdList = req.body.postIdList;
-  var postArr = [];
+router.get("/favorite", async (req, res) => {
+  const userId = req.query.id;
+  const page = req.query.page;
+  console.log("/favorite");
+  const user = await User.findOne(
+      {_id: userId},
+      {_id: false, like_post: true}
+  );
 
-  for (var postId of postIdList) {
-    const postObject = await Post.findById(postId);
-    postArr.push(postObject);
+  const postIds = []
+
+  for(var i = page * offset; i < user.like_post.length && i < (page + 1) * offset; i++) {
+    postIds.push(user.like_post[i]);
   }
+
   const response = {
-    data: postArr,
-  };
+    "data" : []
+  }
+
+  for(var i = 0; i < postIds.length; i++) {
+    const post = await Post.findOne(
+        { _id : postIds[i] }
+    )
+    response["data"].push(post);
+  }
+
   res.status(200).send(response);
 });
 
