@@ -43,6 +43,14 @@ const createFcm = async (req, res, next) => {
     console.log(title + '/' + body);
     await util.sendFcm(title, body, token);
   }
+  if (flag == 2) {
+    // 좋아요 일 경우
+    const title = "'" + nickname + "'님, 좋아요 알림이에요!";
+    const body =
+      "'" + postTitle + "' 에 누군가 좋아요를 눌렀어요. 지금 확인해보세요!";
+    console.log(title + '/' + body);
+    await util.sendFcm(title, body, token);
+  }
   next();
 };
 module.exports = {
