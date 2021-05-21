@@ -1,7 +1,8 @@
 const Post = require('../models/post');
 const User = require('../models/user');
+const commentMid = require('../middle/comment');
+const fcmMid = require('../middle/fcm');
 const express = require('express');
-const { response } = require('express');
 
 const router = express.Router();
 
@@ -193,26 +194,23 @@ router.post('/comment/:id', async (req, res) => {
     .catch((err) => res.status(500).json({ result: 'Fail' }));
 });
 
-router.post('/create/comment', async (req, res) => {
-  console.log('/create/comment');
-  const data = req.body;
-  const post_id = data.postId;
-  const newComment = {
-    post_id: data.postId,
-    writer_id: data.userId,
-    writer_nickname: data.nickname,
-    comment: data.comment,
-    date: Date.now(),
-  };
-
-  Post.updateOne({ _id: post_id }, { $push: { comments: newComment } })
-    .then(() => {
-      res.status(200).json({ result: 'Success', data: newComment });
-    })
-    .catch((err) => {
-      res.status(500).json({ result: 'Fail' });
-    });
-});
+router.post(
+  '/create/comment',
+  commentMid.createComment,
+  fcmMid.searchFcmKey,
+  fcmMid.createFcm,
+  async (req, res, next) => {
+    const data = req.body;
+    const newComment = {
+      post_id: data.postId,
+      writer_id: data.userId,
+      writer_nickname: data.nickname,
+      comment: data.comment,
+      date: Date.now(),
+    };
+    res.status(200).json({ result: 'Success', data: newComment });
+  }
+);
 
 router.delete('/delete/comment', async (req, res) => {
   console.log('/delete/comment');
