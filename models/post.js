@@ -34,7 +34,7 @@ const PostSchema = new mongoose.Schema({
     default: 0,
   },
   like_IDs: {
-    type: [String],
+    type: [Object],
     default: [],
   },
   comments: {
