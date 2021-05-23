@@ -7,7 +7,7 @@ const express = require('express');
 
 const router = express.Router();
 
-const offset = 10;
+const offset = 3;
 
 router.get('/', async (req, res, next) => {
   let categoryTemp;
@@ -29,6 +29,45 @@ router.get('/', async (req, res, next) => {
   const retval = {
     data: posts,
   };
+  res.status(200).send(retval);
+});
+
+router.get('/board', async (req, res, next) => {
+  const categoryTemp = req.query.category;
+  const sortFlag = req.query.flag;
+  console.log(sortFlag);
+  console.log('page' + req.query.page);
+  let retval;
+  if (sortFlag == 1) {
+    const postsTime = await Post.find({
+      category: { $in: categoryTemp },
+    })
+      .sort({
+        update_time: -1,
+      })
+      .skip(req.query.page * offset)
+      .limit(offset);
+
+    console.log(postsTime);
+    retval = {
+      data: postsTime,
+    };
+  } else if (sortFlag == 2) {
+    const postsLike = await Post.find({
+      category: { $in: categoryTemp },
+    })
+      .sort({
+        like_cnt: -1,
+      })
+      .skip(req.query.page * offset)
+      .limit(offset);
+
+    console.log(postsLike);
+    retval = {
+      data: postsLike,
+    };
+  }
+
   res.status(200).send(retval);
 });
 
