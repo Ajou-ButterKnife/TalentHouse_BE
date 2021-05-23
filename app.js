@@ -1,14 +1,14 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
+const express = require("express");
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
 
-const loginRouter = require('./routes/login');
-const signupRouter = require('./routes/signup');
-const postRouter = require('./routes/post');
-const userRouter = require('./routes/user');
-const fcmRouter = require('./routes/fcm');
+const loginRouter = require("./routes/login");
+const signupRouter = require("./routes/signup");
+const postRouter = require("./routes/post");
+const userRouter = require("./routes/user");
+const fcmRouter = require("./routes/fcm");
 
-mongoose.connect('mongodb://127.0.0.1:27017/testDB', {
+mongoose.connect("mongodb://127.0.0.1:27017/testDB", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useFindAndModify: false,
@@ -28,14 +28,23 @@ const port = 4000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use('/login', loginRouter);
-app.use('/signup', signupRouter);
-app.use('/post', postRouter);
-app.use('/user', userRouter);
-app.use('/fcm', fcmRouter);
+app.use("/login", loginRouter);
+app.use("/signup", signupRouter);
+app.use("/post", postRouter);
+app.use("/user", userRouter);
+app.use("/fcm", fcmRouter);
+// app.use(function (err, req, res, next) {
+//   // set locals, only providing error in development
+//   res.locals.message = err.message;
+//   res.locals.error = req.app.get("env") === "development" ? err : {};
 
-app.get('/', (req, res) => {
-  res.send('This is App Server!!');
+//   // render the error page
+//   res.status(err.status || 500);
+//   res.render("error");
+// });
+
+app.get("/", (req, res) => {
+  res.send("This is App Server!!");
 });
 
 app.listen(port, () => {
