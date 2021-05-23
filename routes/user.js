@@ -156,14 +156,5 @@ router.put('/profile/:id', async (req, res) => {
   res.status(200).send(response);
 });
 
-router.get('/post/:id', async (req, res) => {
-  const user_id = req.params.id;
-  User.findById(user_id).then((user) => {
-    const response = {
-      data: user.like_post,
-    };
-    res.status(200).json(response);
-  });
-});
 
 module.exports = router;
