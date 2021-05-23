@@ -34,7 +34,7 @@ router.get('/nickname/:id', async (req, res) => {
 router.get('/:id', async (req, res) => {
   const userInfo = await User.findOne(
     { _id: req.params.id },
-    { _id: false, email: false, password: false, __v: false }
+    { _id: false, email: false, password: false, __v: false, uid: false }
   );
 
   const response = {};
@@ -133,6 +133,24 @@ router.put('/profile/:id', async (req, res) => {
   const data = req.body;
   console.log(data);
 
+  const updateCommentProfile = await Post.updateMany(
+    { 'comments.writer_id': req.params.id },
+    {
+      $set: {
+        'comments.$[].profile': data.profile,
+      },
+    }
+  );
+
+  // const updatePostProfile = await Post.updateMany(
+  //   { writer_id: req.params.id },
+  //   {
+  //     $set: {
+  //       profile: data.profile,
+  //     },
+  //   }
+  // );
+
   const update = await User.updateOne(
     { _id: req.params.id },
     {
@@ -155,6 +173,5 @@ router.put('/profile/:id', async (req, res) => {
 
   res.status(200).send(response);
 });
-
 
 module.exports = router;
