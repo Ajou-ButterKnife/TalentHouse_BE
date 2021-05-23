@@ -7,7 +7,7 @@ const express = require('express');
 
 const router = express.Router();
 
-const offset = 3;
+const offset = 10;
 
 router.get('/', async (req, res, next) => {
   let categoryTemp;
@@ -189,8 +189,8 @@ router.get('/search', async (req, res, next) => {
   }
 });
 
-router.get("/:id/:page", async (req, res, next) => {
-  console.log("/" + req.params.id + "/" + req.params.page);
+router.get('/:id/:page', async (req, res, next) => {
+  console.log('/' + req.params.id + '/' + req.params.page);
   const posts = await Post.find({ writer_id: req.params.id }, {})
     .sort({
       update_time: -1,
@@ -234,47 +234,24 @@ router.post('/comment/:id', async (req, res) => {
     .catch((err) => res.status(500).json({ result: 'Fail' }));
 });
 
-// <<<<<<< hotRouter
-// router.post(
-//   '/create/comment',
-//   commentMid.createComment,
-//   fcmMid.searchFcmKey,
-//   fcmMid.createFcm,
-//   async (req, res, next) => {
-//     const data = req.body;
-//     const newComment = {
-//       post_id: data.postId,
-//       writer_id: data.userId,
-//       writer_nickname: data.nickname,
-//       comment: data.comment,
-//       date: Date.now(),
-//     };
-//     res.status(200).json({ result: 'Success', data: newComment });
-//   }
-// );
-// =======
-// router.post("/create/comment", async (req, res) => {
-//   console.log("/create/comment");
-//   const data = req.body;
-//   const post_id = data.postId;
-//   const newComment = {
-//     post_id: data.postId,
-//     writer_id: data.userId,
-//     writer_nickname: data.nickname,
-//     profile: data.profile,
-//     comment: data.comment,
-//     date: Date.now(),
-//   };
-
-//   Post.updateOne({ _id: post_id }, { $push: { comments: newComment } })
-//     .then(() => {
-//       res.status(200).json({ result: "Success", data: newComment });
-//     })
-//     .catch((err) => {
-//       res.status(500).json({ result: "Fail" });
-//     });
-// });
-// >>>>>>> master
+router.post(
+  '/create/comment',
+  commentMid.createComment,
+  fcmMid.searchFcmKey,
+  fcmMid.createFcm,
+  async (req, res, next) => {
+    const data = req.body;
+    const newComment = {
+      post_id: data.postId,
+      writer_id: data.userId,
+      writer_nickname: data.nickname,
+      comment: data.comment,
+      profile: data.profile,
+      date: Date.now(),
+    };
+    res.status(200).json({ result: 'Success', data: newComment });
+  }
+);
 
 router.delete('/delete/comment', async (req, res) => {
   console.log('/delete/comment');
@@ -296,17 +273,16 @@ router.delete('/delete/comment', async (req, res) => {
     });
 });
 
-
-router.get("/get/favorite/:postId", (req, res) => {
-  console.log("/favorite/:postId");
+router.get('/get/favorite/:postId', (req, res) => {
+  console.log('/favorite/:postId');
   const post_id = req.params.postId;
   Post.findByIdAndUpdate(post_id).then((post) => {
     res.status(200).send({ likeCnt: post.like_cnt, likeIds: post.like_IDs });
   });
 });
 
-router.put("/update/comment/:id", async (req, res) => {
-  console.log("/update/comment");
+router.put('/update/comment/:id', async (req, res) => {
+  console.log('/update/comment');
   const post_id = req.params.id;
   const user_id = req.body.userId;
   const comment_date = req.body.date;
@@ -341,143 +317,59 @@ router.put("/update/comment/:id", async (req, res) => {
   });
 });
 
-// router.post('/favorite', async (req, res) => {
-//   console.log('/favorite');
-//   const post_id = req.body.postId;
+router.post('/favorite', async (req, res) => {
+  console.log('/favorite');
+  const post_id = req.body.postId;
 
-//   Post.findById(post_id).then((post) => {
-//     res.status(200).json({ data: post.like_IDs });
-//   });
-// });
+  Post.findById(post_id).then((post) => {
+    res.status(200).json({ data: post.like_IDs });
+  });
+});
 
-// <<<<<<< hotRouter
-// router.post('/favoritePost', async (req, res) => {
-//   console.log('/favoritePost');
-//   const postIdList = req.body.postIdList;
-//   var postArr = [];
-// =======
-// router.get("/favorite", async (req, res) => {
-//   const userId = req.query.id;
-//   const page = req.query.page;
-//   console.log("/favorite");
-//   const user = await User.findOne(
-//       {_id: userId},
-//       {_id: false, like_post: true}
-//   );
+router.get('/favorite', async (req, res) => {
+  const userId = req.query.id;
+  const page = req.query.page;
+  console.log('/favorite');
+  const user = await User.findOne(
+    { _id: userId },
+    { _id: false, like_post: true }
+  );
 
-//   const postIds = []
-// >>>>>>> master
+  const postIds = [];
 
-//   for(var i = page * offset; i < user.like_post.length && i < (page + 1) * offset; i++) {
-//     postIds.push(user.like_post[i]);
-//   }
+  for (
+    var i = page * offset;
+    i < user.like_post.length && i < (page + 1) * offset;
+    i++
+  ) {
+    postIds.push(user.like_post[i]);
+  }
 
-//   const response = {
-//     "data" : []
-//   }
+  const response = {
+    data: [],
+  };
 
-//   for(var i = 0; i < postIds.length; i++) {
-//     const post = await Post.findOne(
-//         { _id : postIds[i] }
-//     )
-//     response["data"].push(post);
-//   }
+  for (var i = 0; i < postIds.length; i++) {
+    const post = await Post.findOne({ _id: postIds[i] });
+    response['data'].push(post);
+  }
 
-//   res.status(200).send(response);
-// });
+  res.status(200).send(response);
+});
 
-// <<<<<<< hotRouter
-// router.put(
-//   '/like/:postId/:userId',
-//   likeMid.createLike,
-//   fcmMid.searchFcmKey,
-//   fcmMid.createFcm,
-//   (req, res) => {
-//     const likeCount = req.likeCnt.temp_like_cnt;
-//     res.status(200).json({ result: 'Plus', likeCnt: likeCount });
-//   }
-// );
-// =======
-// router.post("/like/:postId", (req, res) => {
-//   console.log("/like/:postId");
+router.post(
+  '/like/:postId',
+  likeMid.createLike,
+  fcmMid.searchFcmKey,
+  fcmMid.createFcm,
+  (req, res) => {
+    const likeCount = req.likeCnt.temp_like_cnt;
+    console.log('plus 전송' + likeCount);
+    res.status(200).json({ result: 'Plus', likeCnt: likeCount });
+  }
+);
 
-//   const post_Id = req.params.postId;
-//   const user_Id = req.body.userId;
-
-//   const new_Like_IDs = {
-//     user_id: req.body.userId,
-//     nickname: req.body.nickname,
-//     profile: req.body.profile,
-//   };
-
-//   Post.findById(post_Id).then((post) => {
-//     const like_IDs = post.like_IDs;
-//     var check = true;
-//     for (var i = 0; i < like_IDs.length; i++) {
-//       if (like_IDs[i].user_id == user_Id) {
-//         check = false;
-//         break;
-//       }
-//     }
-
-//     if (check == true) {
-//       // 좋아요
-//       Post.updateOne(
-//         { _id: post_Id },
-//         { $push: { like_IDs: new_Like_IDs } }
-//       ).then(() => {
-//         temp_like_cnt = post.like_cnt + 1;
-//         Post.findByIdAndUpdate(
-//           post_Id,
-//           { like_cnt: temp_like_cnt },
-//           (err, data) => {
-//             if (err) {
-//               res.status(500).json({ result: "Fail" });
-//             } else {
-//               User.updateOne(
-//                 { _id: user_Id },
-//                 { $push: { like_post: post_Id } }
-//               ).then(() => {
-//                 res
-//                   .status(200)
-//                   .json({ result: "Plus", likeCnt: temp_like_cnt });
-//               });
-//             }
-//           }
-//         );
-//       });
-//     } else {
-//       // 좋아요 취소
-//       Post.updateOne(
-//         { _id: post_Id },
-//         { $pull: { like_IDs: new_Like_IDs } }
-//       ).then(() => {
-//         temp_like_cnt = post.like_cnt - 1;
-//         Post.findByIdAndUpdate(
-//           post_Id,
-//           { like_cnt: temp_like_cnt },
-//           (err, data) => {
-//             if (err) {
-//               res.status(500).json({ result: "Fail" });
-//             } else {
-//               User.updateOne(
-//                 { _id: user_Id },
-//                 { $pull: { like_post: post_Id } }
-//               ).then(() => {
-//                 res
-//                   .status(200)
-//                   .json({ result: "Minus", likeCnt: temp_like_cnt });
-//               });
-//             }
-//           }
-//         );
-//       });
-//     }
-//   });
-// });
-// >>>>>>> master
-
-router.put("/", async (req, res) => {
+router.put('/', async (req, res) => {
   var data = req.body;
 
   console.log(data);
@@ -501,15 +393,15 @@ router.put("/", async (req, res) => {
     response['result'] = 'Success';
     if (updatePost.nModified == 0) response['detail'] = '같은 내용입니다.';
   } else {
-    response["result"] = "Fail";
-    response["detail"] =
-      "개인 정보 변경 중 오류가 발생했습니다.\n다시 실행해주세요.";
+    response['result'] = 'Fail';
+    response['detail'] =
+      '개인 정보 변경 중 오류가 발생했습니다.\n다시 실행해주세요.';
   }
 
   res.status(200).send(response);
 });
 
-router.delete("/:writer_id", async (req, res) => {
+router.delete('/:writer_id', async (req, res) => {
   const post_id = req.body._id;
 
   const del = await Post.deleteOne({
@@ -545,14 +437,14 @@ router.delete("/:writer_id", async (req, res) => {
   const response = {};
 
   if (del.n == 0) {
-    response["result"] = "Fail";
-    response["detail"] = "잘못된 경로입니다.";
+    response['result'] = 'Fail';
+    response['detail'] = '잘못된 경로입니다.';
   } else if (del.n === 1 && del.n === del.ok) {
-    response["result"] = "Success";
+    response['result'] = 'Success';
   } else {
-    response["result"] = "Fail";
-    response["detail"] =
-      "게시글 삭제 중 오류가 발생했습니다.\n다시 실행해주세요.";
+    response['result'] = 'Fail';
+    response['detail'] =
+      '게시글 삭제 중 오류가 발생했습니다.\n다시 실행해주세요.';
   }
 
   res.status(200).send(response);

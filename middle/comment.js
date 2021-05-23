@@ -10,6 +10,7 @@ const createComment = async (req, res, next) => {
     writer_id: data.userId,
     writer_nickname: data.nickname,
     comment: data.comment,
+    profile: data.profile,
     date: Date.now(),
   };
   req.targetUser = {
