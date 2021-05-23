@@ -52,7 +52,7 @@ router.post('/social', async (req, res, next) => {
   const user = await User.create({
     email: userInfo.email,
     nickname: data.nickname,
-    phone_num: data.phone_num,
+    phone_num: data.phone,
     category: data.category,
     uid: data.uid,
     social_login_flag: true,
