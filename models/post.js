@@ -44,6 +44,9 @@ const PostSchema = new mongoose.Schema({
   update_time: {
     type: Number,
   },
+  profile: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("Post", PostSchema);
