@@ -16,7 +16,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/testDB', {
 });
 
 const app = express();
-const port = 5000;
+const port = 4000;
 
 // app.all('/*', function(req, res, next) {
 //   res.header('Access-Control-Allow-Origin', '*');
