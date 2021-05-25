@@ -131,7 +131,7 @@ router.put('/:id', async (req, res) => {
 
 router.put('/profile/:id', async (req, res) => {
   const data = req.body;
-  console.log(data);
+  console.log('herehere' + data);
 
   const updateCommentProfile = await Post.updateMany(
     { 'comments.writer_id': req.params.id },
@@ -147,6 +147,15 @@ router.put('/profile/:id', async (req, res) => {
     {
       $set: {
         profile: data.profile,
+      },
+    }
+  );
+
+  const updateLikeProfile = await Post.updateMany(
+    { 'like_IDs.user_id': req.params.id },
+    {
+      $set: {
+        'like_IDs.$[].profile': data.profile,
       },
     }
   );
