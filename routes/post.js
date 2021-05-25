@@ -1,20 +1,20 @@
-const Post = require('../models/post');
-const User = require('../models/user');
-const commentMid = require('../middle/comment');
-const fcmMid = require('../middle/fcm');
-const likeMid = require('../middle/like');
-const express = require('express');
+const Post = require("../models/post");
+const User = require("../models/user");
+const commentMid = require("../middle/comment");
+const fcmMid = require("../middle/fcm");
+const likeMid = require("../middle/like");
+const express = require("express");
 
 const router = express.Router();
 
 const offset = 10;
 
-router.get('/', async (req, res, next) => {
+router.get("/", async (req, res, next) => {
   let categoryTemp;
-  if (req.query.category != 'all') {
-    categoryTemp = req.query.category.split('-');
+  if (req.query.category != "all") {
+    categoryTemp = req.query.category.split("-");
   } else {
-    categoryTemp = ['춤', '노래', '랩', '그림', '사진', '기타'];
+    categoryTemp = ["춤", "노래", "랩", "그림", "사진", "기타"];
   }
 
   const posts = await Post.find({
@@ -32,11 +32,11 @@ router.get('/', async (req, res, next) => {
   res.status(200).send(retval);
 });
 
-router.get('/board', async (req, res, next) => {
+router.get("/board", async (req, res, next) => {
   const categoryTemp = req.query.category;
   const sortFlag = req.query.flag;
   console.log(sortFlag);
-  console.log('page' + req.query.page);
+  console.log("page" + req.query.page);
   let retval;
   if (sortFlag == 1) {
     const postsTime = await Post.find({
@@ -71,7 +71,7 @@ router.get('/board', async (req, res, next) => {
   res.status(200).send(retval);
 });
 
-router.get('/hot', async (req, res, next) => {
+router.get("/hot", async (req, res, next) => {
   const startDate = new Date(req.query.startDate);
   let endDate = new Date(req.query.endDate);
   endDate.setDate(endDate.getDate() + 1);
@@ -81,7 +81,7 @@ router.get('/hot', async (req, res, next) => {
 
   const posts = await Post.find({
     update_time: { $gte: startDate, $lte: endDate },
-    category: '춤',
+    category: "춤",
   })
     .sort({
       like_cnt: -1,
@@ -90,7 +90,7 @@ router.get('/hot', async (req, res, next) => {
 
   const posts2 = await Post.find({
     update_time: { $gte: startDate, $lte: endDate },
-    category: '노래',
+    category: "노래",
   })
     .sort({
       like_cnt: -1,
@@ -99,7 +99,7 @@ router.get('/hot', async (req, res, next) => {
 
   const posts3 = await Post.find({
     update_time: { $gte: startDate, $lte: endDate },
-    category: '랩',
+    category: "랩",
   })
     .sort({
       like_cnt: -1,
@@ -108,7 +108,7 @@ router.get('/hot', async (req, res, next) => {
 
   const posts4 = await Post.find({
     update_time: { $gte: startDate, $lte: endDate },
-    category: '그림',
+    category: "그림",
   })
     .sort({
       like_cnt: -1,
@@ -117,7 +117,7 @@ router.get('/hot', async (req, res, next) => {
 
   const posts5 = await Post.find({
     update_time: { $gte: startDate, $lte: endDate },
-    category: '사진',
+    category: "사진",
   })
     .sort({
       like_cnt: -1,
@@ -126,7 +126,7 @@ router.get('/hot', async (req, res, next) => {
 
   const posts6 = await Post.find({
     update_time: { $gte: startDate, $lte: endDate },
-    category: '기타',
+    category: "기타",
   })
     .sort({
       like_cnt: -1,
@@ -155,7 +155,7 @@ router.get('/hot', async (req, res, next) => {
   res.status(200).send(retval);
 });
 
-router.get('/search', async (req, res, next) => {
+router.get("/search", async (req, res, next) => {
   const offset = 3;
   if (req.query.search_type == 1) {
     // 작성자 검색
@@ -189,8 +189,8 @@ router.get('/search', async (req, res, next) => {
   }
 });
 
-router.get('/:id/:page', async (req, res, next) => {
-  console.log('/' + req.params.id + '/' + req.params.page);
+router.get("/:id/:page", async (req, res, next) => {
+  console.log("/" + req.params.id + "/" + req.params.page);
   const posts = await Post.find({ writer_id: req.params.id }, {})
     .sort({
       update_time: -1,
@@ -203,12 +203,13 @@ router.get('/:id/:page', async (req, res, next) => {
   res.status(200).send(retval);
 });
 
-router.post('/create', async (req, res) => {
+router.post("/create", async (req, res) => {
   var data = req.body;
 
   const post = new Post({
     writer_id: data.id,
     writer_nickname: data.nickname,
+    profile: data.profile,
     category: data.category,
     title: data.title,
     description: data.description,
@@ -218,24 +219,24 @@ router.post('/create', async (req, res) => {
   });
   post.save((err) => {
     if (err) {
-      res.status(500).json({ result: 'Fail' });
+      res.status(500).json({ result: "Fail" });
     } else {
-      res.status(200).json({ result: 'Success' });
+      res.status(200).json({ result: "Success" });
     }
   });
 });
 
-router.post('/comment/:id', async (req, res) => {
-  console.log('/comment/:id');
+router.post("/comment/:id", async (req, res) => {
+  console.log("/comment/:id");
   Post.findById(req.params.id)
     .then((p) => {
-      res.status(200).json({ result: 'Success', data: p.comments });
+      res.status(200).json({ result: "Success", data: p.comments });
     })
-    .catch((err) => res.status(500).json({ result: 'Fail' }));
+    .catch((err) => res.status(500).json({ result: "Fail" }));
 });
 
 router.post(
-  '/create/comment',
+  "/create/comment",
   commentMid.createComment,
   fcmMid.searchFcmKey,
   fcmMid.createFcm,
@@ -249,12 +250,12 @@ router.post(
       profile: data.profile,
       date: Date.now(),
     };
-    res.status(200).json({ result: 'Success', data: newComment });
+    res.status(200).json({ result: "Success", data: newComment });
   }
 );
 
-router.delete('/delete/comment', async (req, res) => {
-  console.log('/delete/comment');
+router.delete("/delete/comment", async (req, res) => {
+  console.log("/delete/comment");
 
   const post_id = req.body.postId;
   const user_id = req.body.userId;
@@ -265,24 +266,24 @@ router.delete('/delete/comment', async (req, res) => {
     { $pull: { comments: { writer_id: user_id, date: date } } }
   )
     .then(() => {
-      res.status(200).json({ result: 'Success' });
+      res.status(200).json({ result: "Success" });
     })
     .catch((err) => {
       console.log(err);
-      res.status(500).json({ result: 'Fail' });
+      res.status(500).json({ result: "Fail" });
     });
 });
 
-router.get('/get/favorite/:postId', (req, res) => {
-  console.log('/favorite/:postId');
+router.get("/get/favorite/:postId", (req, res) => {
+  console.log("/favorite/:postId");
   const post_id = req.params.postId;
   Post.findByIdAndUpdate(post_id).then((post) => {
     res.status(200).send({ likeCnt: post.like_cnt, likeIds: post.like_IDs });
   });
 });
 
-router.put('/update/comment/:id', async (req, res) => {
-  console.log('/update/comment');
+router.put("/update/comment/:id", async (req, res) => {
+  console.log("/update/comment");
   const post_id = req.params.id;
   const user_id = req.body.userId;
   const comment_date = req.body.date;
@@ -308,17 +309,17 @@ router.put('/update/comment/:id', async (req, res) => {
       (err, data) => {
         if (err) {
           console.log(err);
-          res.status(500).json({ result: 'Fail' });
+          res.status(500).json({ result: "Fail" });
         } else {
-          res.status(200).json({ result: 'Success', data: response_comment });
+          res.status(200).json({ result: "Success", data: response_comment });
         }
       }
     );
   });
 });
 
-router.post('/favorite', async (req, res) => {
-  console.log('/favorite');
+router.post("/favorite", async (req, res) => {
+  console.log("/favorite");
   const post_id = req.body.postId;
 
   Post.findById(post_id).then((post) => {
@@ -326,10 +327,10 @@ router.post('/favorite', async (req, res) => {
   });
 });
 
-router.get('/favorite', async (req, res) => {
+router.get("/favorite", async (req, res) => {
   const userId = req.query.id;
   const page = req.query.page;
-  console.log('/favorite');
+  console.log("/favorite");
   const user = await User.findOne(
     { _id: userId },
     { _id: false, like_post: true }
@@ -351,25 +352,25 @@ router.get('/favorite', async (req, res) => {
 
   for (var i = 0; i < postIds.length; i++) {
     const post = await Post.findOne({ _id: postIds[i] });
-    response['data'].push(post);
+    response["data"].push(post);
   }
 
   res.status(200).send(response);
 });
 
 router.post(
-  '/like/:postId',
+  "/like/:postId",
   likeMid.createLike,
   fcmMid.searchFcmKey,
   fcmMid.createFcm,
   (req, res) => {
     const likeCount = req.likeCnt.temp_like_cnt;
-    console.log('plus 전송' + likeCount);
-    res.status(200).json({ result: 'Plus', likeCnt: likeCount });
+    console.log("plus 전송" + likeCount);
+    res.status(200).json({ result: "Plus", likeCnt: likeCount });
   }
 );
 
-router.put('/', async (req, res) => {
+router.put("/", async (req, res) => {
   var data = req.body;
 
   console.log(data);
@@ -390,18 +391,18 @@ router.put('/', async (req, res) => {
   const response = {};
 
   if (updatePost.n === 1 && updatePost.n === updatePost.ok) {
-    response['result'] = 'Success';
-    if (updatePost.nModified == 0) response['detail'] = '같은 내용입니다.';
+    response["result"] = "Success";
+    if (updatePost.nModified == 0) response["detail"] = "같은 내용입니다.";
   } else {
-    response['result'] = 'Fail';
-    response['detail'] =
-      '개인 정보 변경 중 오류가 발생했습니다.\n다시 실행해주세요.';
+    response["result"] = "Fail";
+    response["detail"] =
+      "개인 정보 변경 중 오류가 발생했습니다.\n다시 실행해주세요.";
   }
 
   res.status(200).send(response);
 });
 
-router.delete('/:writer_id', async (req, res) => {
+router.delete("/:writer_id", async (req, res) => {
   const post_id = req.body._id;
 
   const del = await Post.deleteOne({
@@ -437,14 +438,14 @@ router.delete('/:writer_id', async (req, res) => {
   const response = {};
 
   if (del.n == 0) {
-    response['result'] = 'Fail';
-    response['detail'] = '잘못된 경로입니다.';
+    response["result"] = "Fail";
+    response["detail"] = "잘못된 경로입니다.";
   } else if (del.n === 1 && del.n === del.ok) {
-    response['result'] = 'Success';
+    response["result"] = "Success";
   } else {
-    response['result'] = 'Fail';
-    response['detail'] =
-      '게시글 삭제 중 오류가 발생했습니다.\n다시 실행해주세요.';
+    response["result"] = "Fail";
+    response["detail"] =
+      "게시글 삭제 중 오류가 발생했습니다.\n다시 실행해주세요.";
   }
 
   res.status(200).send(response);
