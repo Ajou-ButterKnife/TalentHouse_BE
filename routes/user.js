@@ -142,14 +142,14 @@ router.put('/profile/:id', async (req, res) => {
     }
   );
 
-  // const updatePostProfile = await Post.updateMany(
-  //   { writer_id: req.params.id },
-  //   {
-  //     $set: {
-  //       profile: data.profile,
-  //     },
-  //   }
-  // );
+  const updatePostProfile = await Post.updateMany(
+    { writer_id: req.params.id },
+    {
+      $set: {
+        profile: data.profile,
+      },
+    }
+  );
 
   const update = await User.updateOne(
     { _id: req.params.id },
