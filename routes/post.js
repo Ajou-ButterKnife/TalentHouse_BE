@@ -7,7 +7,7 @@ const express = require('express');
 
 const router = express.Router();
 
-const offset = 3;
+const offset = 10;
 
 router.get('/', async (req, res, next) => {
   let categoryTemp;
@@ -455,5 +455,13 @@ router.delete('/:writer_id', async (req, res) => {
 
   res.status(200).send(response);
 });
+
+router.get("/one", async(req, res) => {
+  const postItem = await Post.findOne(
+      { _id : req.query.id }
+  )
+
+  res.status(200).send(postItem)
+})
 
 module.exports = router;
