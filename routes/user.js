@@ -99,7 +99,7 @@ router.put('/:id', async (req, res) => {
     { 'comments.writer_id': req.params.id },
     {
       $set: {
-        'comments.$[].writer_nickname': data.nickname,
+        'comments.$.writer_nickname': data.nickname,
       },
     }
   );
@@ -137,7 +137,7 @@ router.put('/profile/:id', async (req, res) => {
     { 'comments.writer_id': req.params.id },
     {
       $set: {
-        'comments.$[].profile': data.profile,
+        'comments.$.profile': data.profile,
       },
     }
   );
@@ -155,7 +155,7 @@ router.put('/profile/:id', async (req, res) => {
     { 'like_IDs.user_id': req.params.id },
     {
       $set: {
-        'like_IDs.$[].profile': data.profile,
+        'like_IDs.$.profile': data.profile,
       },
     }
   );
